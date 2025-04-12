@@ -1,0 +1,50 @@
+name: 基础静态页面部署
+
+on:
+  workflow_dispatch:
+
+# 添加权限配置
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v2
+      
+      - name: 创建基础页面
+        run: |
+          # 确保目录存在
+          mkdir -p public
+          # 创建最简单的HTML页面
+          cat > public/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <title>精听记录</title>
+          </head>
+          <body>
+            <h1>精听练习记录系统</h1>
+            <p>基础页面已成功部署！</p>
+            <p>当前构建时间: $(date)</p>
+          </body>
+          </html>
+          EOF
+          
+          # 将原始网站文件复制到public目录
+          if [ -d "website" ]; then
+            cp -r website public/
+            echo "已复制website目录内容到public/"
+            ls -la public/
+          fi
+      
+      - name: 部署到GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: gh-pages  # 部署到gh-pages分支
+          folder: public    # 源文件夹
+          clean: true       # 自动清除旧文件 

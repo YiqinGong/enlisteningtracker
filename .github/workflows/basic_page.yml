@@ -1,6 +1,10 @@
 name: 基础静态页面部署
 
 on:
+  push:
+    branches:
+      - main
+      - master
   workflow_dispatch:
 
 # 添加权限配置
@@ -15,36 +19,59 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v2
       
-      - name: 创建基础页面
+      - name: 创建静态页面
         run: |
-          # 确保目录存在
-          mkdir -p public
-          # 创建最简单的HTML页面
-          cat > public/index.html << 'EOF'
+          echo "正在准备静态文件..."
+          
+          # 创建包含网站内容的目录
+          mkdir -p _site
+          
+          # 复制所有文件到部署目录
+          cp -r * _site/ 2>/dev/null || true
+          cp -r .github _site/ 2>/dev/null || true
+          cp README.md _site/ 2>/dev/null || true
+          
+          # 创建最简单的首页
+          cat > _site/index.html << 'EOF'
           <!DOCTYPE html>
           <html>
           <head>
             <meta charset="UTF-8">
-            <title>精听记录</title>
+            <title>精听记录系统</title>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; }
+              .container { max-width: 800px; margin: 0 auto; }
+              h1 { color: #333; }
+              .btn { display: inline-block; background: #4CAF50; color: white; padding: 10px 20px; 
+                    text-decoration: none; border-radius: 4px; margin-top: 20px; }
+            </style>
           </head>
           <body>
-            <h1>精听练习记录系统</h1>
-            <p>基础页面已成功部署！</p>
-            <p>当前构建时间: $(date)</p>
+            <div class="container">
+              <h1>精听练习记录系统</h1>
+              <p>欢迎使用精听练习记录系统。这个系统帮助您跟踪和记录您的英语精听练习。</p>
+              <p><a class="btn" href="website/index.html">进入系统</a></p>
+              <hr>
+              <p><small>部署时间: $(date)</small></p>
+            </div>
           </body>
           </html>
           EOF
           
-          # 将原始网站文件复制到public目录
-          if [ -d "website" ]; then
-            cp -r website public/
-            echo "已复制website目录内容到public/"
-            ls -la public/
+          # 检查文件是否正确复制
+          echo "部署目录内容:"
+          ls -la _site/
+          echo "========"
+          if [ -d "_site/website" ]; then
+            echo "网站目录已复制:"
+            ls -la _site/website/
+          else
+            echo "警告: 未找到website目录!"
           fi
       
       - name: 部署到GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@4.1.4
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages  # 部署到gh-pages分支
-          folder: public    # 源文件夹
-          clean: true       # 自动清除旧文件 
+          folder: _site       # 源文件夹
+          branch: gh-pages    # 部署到gh-pages分支
+          clean: true         # 自动清除旧文件 

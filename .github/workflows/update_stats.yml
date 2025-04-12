@@ -1,0 +1,33 @@
+name: 更新统计数据
+
+on:
+  push:
+    paths:
+      - 'logs/**.md'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'  # 每天午夜执行
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+      
+      - name: 设置Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: 更新统计数据
+        run: |
+          python scripts/update_stats.py
+      
+      - name: 提交更改
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add stats/
+          git commit -m "自动更新统计数据" || echo "没有变更需要提交"
+          git push 

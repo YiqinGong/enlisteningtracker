@@ -1,0 +1,63 @@
+name: 检查GitHub Pages设置
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v2
+        
+      - name: 检查文件结构
+        run: |
+          echo "文件结构检查:"
+          ls -la
+          echo "-----------------"
+          
+          if [ -d "website" ]; then
+            echo "✅ website目录存在"
+            ls -la website/
+          else
+            echo "❌ website目录不存在"
+          fi
+          
+          if [ -f "website/index.html" ]; then
+            echo "✅ website/index.html文件存在"
+          else
+            echo "❌ website/index.html文件不存在"
+          fi
+          
+          echo "-----------------"
+          echo "分支信息:"
+          git branch
+          git rev-parse --abbrev-ref HEAD
+          
+      - name: 创建测试页面
+        run: |
+          echo "创建测试页面..."
+          
+          # 创建简单的测试页面
+          mkdir -p public
+          cat > public/test.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>GitHub Pages测试</title>
+          </head>
+          <body>
+            <h1>GitHub Pages测试页面</h1>
+            <p>如果您看到此页面，说明基本部署功能正常。</p>
+            <p>当前时间: $(date)</p>
+          </body>
+          </html>
+          EOF
+          
+          echo "✅ 测试页面创建完成"
+          
+      - name: 上传测试页面
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-page
+          path: public/test.html 

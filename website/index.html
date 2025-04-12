@@ -173,6 +173,7 @@
                     <div class="mb-4">
                         <button type="button" class="btn btn-primary" id="preview-btn">预览</button>
                         <button type="submit" class="btn btn-success">提交到GitHub</button>
+                        <a id="issue-link" href="https://github.com/yiqingong/enlisteningtracker/issues/new?template=listening_record.yml" target="_blank" class="btn btn-info ms-2">通过Issue提交</a>
                     </div>
                     
                     <div class="card mb-4 d-none" id="preview-card">
@@ -390,7 +391,7 @@
                 const fileContent = btoa(unescape(encodeURIComponent(markdown))); // Base64编码
                 const fileName = `logs/${dateString}.md`;
                 
-                alert('此功能需要GitHub API和身份验证。在实际使用中，这里将跳转到GitHub授权页面，完成后自动提交文件。\n\n目前，请手动复制Markdown内容，然后在GitHub网站上创建新文件。');
+                alert('此功能需要GitHub API和身份验证。\n\n推荐使用Issue方式提交:\n1. 点击下方"通过Issue提交"按钮\n2. 在新页面填写表单\n3. 提交Issue后系统会自动处理');
                 
                 // 实际实现中，这里需要使用GitHub API和OAuth授权
                 // 由于这是一个静态演示，所以简化处理

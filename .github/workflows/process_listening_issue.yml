@@ -1,0 +1,171 @@
+name: 处理精听记录Issue
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  process-issue:
+    if: contains(github.event.issue.labels.*.name, '自动处理') && contains(github.event.issue.labels.*.name, '精听记录')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v2
+        
+      - name: 设置Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+          
+      - name: 处理Issue内容
+        id: process
+        run: |
+          pip install PyGithub pyyaml
+          cat > process_issue.py << 'EOF'
+          import os
+          import re
+          import yaml
+          import json
+          import datetime
+          from github import Github
+
+          # 获取环境变量
+          issue_number = os.environ['ISSUE_NUMBER']
+          repo_name = os.environ['GITHUB_REPOSITORY']
+          token = os.environ['GITHUB_TOKEN']
+
+          # 初始化GitHub API
+          g = Github(token)
+          repo = g.get_repo(repo_name)
+          issue = repo.get_issue(int(issue_number))
+
+          # 提取Issue正文
+          body = issue.body
+          
+          # 分析Issue表单内容
+          pattern = r'### (.+?)\s*\n\n(.+?)(?=\n\n###|$)'
+          matches = re.findall(pattern, body, re.DOTALL)
+          
+          # 创建数据字典
+          data = {}
+          for label, value in matches:
+              key = label.strip().lower().replace(' ', '_')
+              # 清理值
+              value = value.strip()
+              if key == 'date' and not value:
+                  value = datetime.datetime.now().strftime('%Y-%m-%d')
+              data[key] = value
+          
+          # 提取特殊字段
+          transcript = data.get('精听字幕', '').strip()
+          vocabulary = data.get('生词和表达', '').strip()
+          difficult_sentences = data.get('难点句子分析', '').strip()
+          
+          # 创建Markdown内容
+          md_content = f"""# 日期: {data.get('日期', '')}
+
+          ## 视频信息
+
+          - 标题: {data.get('视频标题', '')}
+          - 链接: {data.get('视频链接', '')}
+          - 时长: {data.get('视频时长', '')}
+          - 难度: {data.get('难度', '')}
+          - 语速: {data.get('语速', '')}
+          - 口音: {data.get('口音', '')}
+
+          ## 内容摘要
+
+          {data.get('内容摘要', '')}
+
+          ## 精听字幕
+
+          ```
+          {transcript}
+          ```
+
+          ## 生词和表达
+
+          {vocabulary}
+
+          ## 难点句子分析
+
+          {difficult_sentences}
+
+          ## 学习笔记
+
+          {data.get('学习笔记', '')}
+
+          ## 感想
+
+          {data.get('感想', '')}
+
+          ## 练习时间统计
+
+          - 开始时间：{data.get('开始时间', '')}
+          - 结束时间：{data.get('结束时间', '')}
+          - 总用时：{data.get('总用时（分钟）', '')}分钟
+          - 暂停次数：{data.get('暂停次数', '')}
+          - 重复次数：{data.get('重复次数', '')}
+          """
+          
+          # 格式化Markdown（修复缩进）
+          md_content = '\n'.join([line.strip() for line in md_content.split('\n')])
+          
+          # 确定文件名
+          date = data.get('日期', datetime.datetime.now().strftime('%Y-%m-%d'))
+          file_path = f"logs/{date}.md"
+          
+          # 检查文件是否已存在
+          try:
+              repo.get_contents(file_path)
+              file_exists = True
+          except:
+              file_exists = False
+          
+          # 创建或更新文件
+          if file_exists:
+              contents = repo.get_contents(file_path)
+              repo.update_file(
+                  path=file_path,
+                  message=f"更新精听记录: {date}",
+                  content=md_content,
+                  sha=contents.sha
+              )
+              print(f"已更新文件: {file_path}")
+          else:
+              repo.create_file(
+                  path=file_path,
+                  message=f"添加精听记录: {date}",
+                  content=md_content
+              )
+              print(f"已创建文件: {file_path}")
+          
+          # 添加评论并关闭Issue
+          issue.create_comment(f"✅ 已成功创建精听记录文件 [{file_path}](../blob/main/{file_path})。\n\n感谢您的提交！")
+          issue.edit(state='closed')
+          
+          # 输出结果
+          print(f"::set-output name=file_path::{file_path}")
+          EOF
+          
+          python process_issue.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          
+      - name: 更新统计数据
+        run: |
+          cd $GITHUB_WORKSPACE
+          if [ -f "scripts/update_stats.py" ]; then
+            python scripts/update_stats.py
+            
+            # 提交更改
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add stats/
+            git commit -m "自动更新统计数据" || echo "没有统计数据需要更新"
+            git push
+          fi 

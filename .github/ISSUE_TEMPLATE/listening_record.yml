@@ -1,0 +1,195 @@
+name: 提交精听记录
+description: 通过此模板提交新的精听练习记录
+title: "精听记录: "
+labels: ["精听记录", "自动处理"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 精听记录表单
+        请填写以下内容，提交后系统将自动创建精听记录文件。
+        
+  - type: input
+    id: date
+    attributes:
+      label: 日期
+      description: 精听练习的日期
+      placeholder: YYYY-MM-DD
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 视频信息
+        
+  - type: input
+    id: title
+    attributes:
+      label: 视频标题
+      placeholder: 视频的完整标题
+    validations:
+      required: true
+      
+  - type: input
+    id: link
+    attributes:
+      label: 视频链接
+      placeholder: https://www.youtube.com/watch?v=...
+    validations:
+      required: true
+      
+  - type: input
+    id: duration
+    attributes:
+      label: 视频时长
+      placeholder: 例如：5:30
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: 难度
+      options:
+        - 简单
+        - 中等
+        - 困难
+      default: 1
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: speed
+    attributes:
+      label: 语速
+      options:
+        - 慢
+        - 中
+        - 快
+      default: 1
+    validations:
+      required: true
+      
+  - type: input
+    id: accent
+    attributes:
+      label: 口音
+      placeholder: 例如：美式英语
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 内容详情
+        
+  - type: textarea
+    id: summary
+    attributes:
+      label: 内容摘要
+      description: 简要描述视频内容
+      placeholder: 这个视频主要讲述了...
+    validations:
+      required: true
+      
+  - type: textarea
+    id: transcript
+    attributes:
+      label: 精听字幕
+      description: 粘贴视频字幕
+      placeholder: 视频的完整字幕文本...
+    validations:
+      required: true
+      
+  - type: textarea
+    id: vocabulary
+    attributes:
+      label: 生词和表达
+      description: 按以下格式列出生词和表达（每行一个）
+      placeholder: |
+        单词/短语 | 音标/发音 | 释义 | 例句
+        ---------|---------|------|------
+        challenging | /ˈtʃælɪndʒɪŋ/ | 具挑战性的 | Listening is one of the most challenging aspects.
+        exposure | /ɪkˈspoʊʒər/ | 接触 | You need more exposure to native speakers.
+    validations:
+      required: false
+
+  - type: textarea
+    id: difficult_sentences
+    attributes:
+      label: 难点句子分析
+      description: 列出难点句子及分析
+      placeholder: |
+        1. 句子：This is a difficult sentence to understand.
+           - 分析：这个句子使用了倒装结构...
+           - 翻译：这是一个难以理解的句子。
+        
+        2. 句子：Another challenging expression here.
+           - 分析：此处使用了...
+           - 翻译：另一个有挑战性的表达。
+    validations:
+      required: false
+      
+  - type: textarea
+    id: notes
+    attributes:
+      label: 学习笔记
+      description: 记录学习中的发现和心得
+      placeholder: 学习笔记内容...
+    validations:
+      required: false
+      
+  - type: textarea
+    id: thoughts
+    attributes:
+      label: 感想
+      description: 对这次精听练习的感想
+      placeholder: 我的感想...
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 练习时间统计
+        
+  - type: input
+    id: start_time
+    attributes:
+      label: 开始时间
+      placeholder: 例如：19:00
+    validations:
+      required: false
+      
+  - type: input
+    id: end_time
+    attributes:
+      label: 结束时间
+      placeholder: 例如：20:15
+    validations:
+      required: false
+      
+  - type: input
+    id: total_time
+    attributes:
+      label: 总用时（分钟）
+      placeholder: 例如：75
+    validations:
+      required: true
+      
+  - type: input
+    id: pause_count
+    attributes:
+      label: 暂停次数
+      placeholder: 例如：12
+    validations:
+      required: false
+      
+  - type: input
+    id: repeat_count
+    attributes:
+      label: 重复次数
+      placeholder: 例如：8
+    validations:
+      required: false 

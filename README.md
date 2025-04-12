@@ -21,7 +21,9 @@
 
 本项目支持完全在网页上操作，无需下载任何文件到本地：
 
-1. 访问项目的GitHub Pages页面：`https://用户名.github.io/仓库名/`
+1. 访问项目的GitHub Pages页面：`https://用户名.github.io/enlisteningtracker/`
+   - 例如：https://yiqingong.github.io/enlisteningtracker/
+   - 注意：请确保使用正确的格式，用户名和仓库名之间是斜杠(/)而不是点(.)
 2. 在"创建记录"选项卡中填写精听内容
 3. 点击"预览"按钮查看Markdown格式
 4. 点击"提交到GitHub"按钮（需要GitHub授权）
@@ -57,4 +59,15 @@
 
 1. 使用[DownSub](https://downsub.com/)等第三方网站下载字幕
 2. 在YouTube视频下方找到"显示文字记录"按钮，复制字幕
-3. 使用浏览器扩展程序获取字幕 
+3. 使用浏览器扩展程序获取字幕
+
+## 常见问题
+
+### 网页访问404错误
+
+如果访问GitHub Pages时出现404错误，请检查：
+
+1. 确保URL格式正确：`https://用户名.github.io/enlisteningtracker/`
+2. 确保仓库设置中已启用GitHub Pages功能（设置->Pages）
+3. 确保工作流有权限部署Pages（设置->Actions->General->Workflow permissions）
+4. 查看Actions标签页中部署工作流是否成功运行 

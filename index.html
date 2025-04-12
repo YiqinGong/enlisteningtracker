@@ -400,7 +400,7 @@
             document.getElementById('show-daily').addEventListener('click', function() {
                 document.getElementById('stats-content').innerHTML = '<div class="text-center"><p>加载中...</p></div>';
                 // 从GitHub仓库加载日统计数据
-                fetch('https://raw.githubusercontent.com/USERNAME/enlisteningtracker/main/stats/daily.md')
+                fetch('https://raw.githubusercontent.com/yiqingong/enlisteningtracker/main/stats/daily.md')
                     .then(response => response.text())
                     .then(markdown => {
                         document.getElementById('stats-content').innerHTML = marked.parse(markdown);
@@ -413,7 +413,7 @@
             document.getElementById('show-weekly').addEventListener('click', function() {
                 document.getElementById('stats-content').innerHTML = '<div class="text-center"><p>加载中...</p></div>';
                 // 从GitHub仓库加载周统计数据
-                fetch('https://raw.githubusercontent.com/USERNAME/enlisteningtracker/main/stats/weekly.md')
+                fetch('https://raw.githubusercontent.com/yiqingong/enlisteningtracker/main/stats/weekly.md')
                     .then(response => response.text())
                     .then(markdown => {
                         document.getElementById('stats-content').innerHTML = marked.parse(markdown);
@@ -426,7 +426,7 @@
             document.getElementById('show-summary').addEventListener('click', function() {
                 document.getElementById('stats-content').innerHTML = '<div class="text-center"><p>加载中...</p></div>';
                 // 从GitHub仓库加载总统计数据
-                fetch('https://raw.githubusercontent.com/USERNAME/enlisteningtracker/main/stats/summary.md')
+                fetch('https://raw.githubusercontent.com/yiqingong/enlisteningtracker/main/stats/summary.md')
                     .then(response => response.text())
                     .then(markdown => {
                         document.getElementById('stats-content').innerHTML = marked.parse(markdown);
